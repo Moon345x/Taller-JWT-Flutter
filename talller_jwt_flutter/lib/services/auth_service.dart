@@ -3,15 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AuthResult {
-  const AuthResult({
-    required this.token,
-    this.name,
-    this.email,
-  });
+  const AuthResult({required this.token});
 
   final String token;
-  final String? name;
-  final String? email;
 }
 
 class AuthException implements Exception {
@@ -24,18 +18,17 @@ class AuthException implements Exception {
 }
 
 class AuthService {
-  static const String _endpoint =
-      'https://parking.visiontic.com.co/api/login';
+  static const String _endpoint = 'https://fakestoreapi.com/auth/login';
 
   Future<AuthResult> login({
-    required String email,
+    required String username,
     required String password,
   }) async {
     final uri = Uri.parse(_endpoint);
     final response = await http.post(
       uri,
       headers: const {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
+      body: jsonEncode({'username': username, 'password': password}),
     );
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
@@ -50,14 +43,7 @@ class AuthService {
       throw const AuthException('No se recibio token');
     }
 
-    final name = _pickString(decoded, ['name', 'nombre']);
-    final responseEmail = _pickString(decoded, ['email']);
-
-    return AuthResult(
-      token: token,
-      name: name,
-      email: responseEmail,
-    );
+    return AuthResult(token: token);
   }
 
   Map<String, dynamic> _decodeJson(String body) {
@@ -71,7 +57,11 @@ class AuthService {
   }
 
   String? _extractToken(Map<String, dynamic> json) {
-    return _pickString(json, ['token', 'access_token', 'accessToken', 'jwt']);
+    final value = json['token'];
+    if (value is String && value.isNotEmpty) {
+      return value;
+    }
+    return null;
   }
 
   String? _extractError(String body) {
@@ -87,22 +77,4 @@ class AuthService {
     return null;
   }
 
-  String? _pickString(Map<String, dynamic> json, List<String> keys) {
-    for (final key in keys) {
-      final value = json[key];
-      if (value is String && value.isNotEmpty) {
-        return value;
-      }
-    }
-    final data = json['data'];
-    if (data is Map<String, dynamic>) {
-      for (final key in keys) {
-        final value = data[key];
-        if (value is String && value.isNotEmpty) {
-          return value;
-        }
-      }
-    }
-    return null;
-  }
 }

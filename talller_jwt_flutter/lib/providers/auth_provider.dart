@@ -18,15 +18,14 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isInitialized = false;
   String? _errorMessage;
-  String? _name;
-  String? _email;
+  String? _username;
   String? _token;
 
   bool get isLoading => _isLoading;
   bool get isInitialized => _isInitialized;
   String? get errorMessage => _errorMessage;
-  String get displayName => _name?.isNotEmpty == true ? _name! : 'Sin nombre';
-  String get displayEmail => _email?.isNotEmpty == true ? _email! : 'Sin email';
+  String get displayUsername =>
+      _username?.isNotEmpty == true ? _username! : 'Sin usuario';
   bool get hasToken => _token?.isNotEmpty == true;
 
   Future<void> initialize() async {
@@ -37,32 +36,26 @@ class AuthProvider extends ChangeNotifier {
     final token = await secureStorageService.getToken();
     final profile = await storageService.getProfile();
     _token = token;
-    _name = profile.name;
-    _email = profile.email;
+    _username = profile.username;
     _isInitialized = true;
     _setLoading(false);
   }
 
   Future<bool> login({
-    required String email,
+    required String username,
     required String password,
   }) async {
     _errorMessage = null;
     _setLoading(true);
     try {
-      final result = await authService.login(email: email, password: password);
-      final nameToSave = result.name ?? '';
-      final emailToSave = result.email ?? email;
+      final result =
+          await authService.login(username: username, password: password);
 
-      await storageService.saveProfile(
-        name: nameToSave,
-        email: emailToSave,
-      );
+      await storageService.saveUsername(username);
       await secureStorageService.saveToken(result.token);
 
       _token = result.token;
-      _name = nameToSave;
-      _email = emailToSave;
+      _username = username;
       _setLoading(false);
       return true;
     } on AuthException catch (e) {
@@ -80,8 +73,7 @@ class AuthProvider extends ChangeNotifier {
     await storageService.clear();
     await secureStorageService.clearAll();
     _token = null;
-    _name = null;
-    _email = null;
+    _username = null;
     _setLoading(false);
   }
 

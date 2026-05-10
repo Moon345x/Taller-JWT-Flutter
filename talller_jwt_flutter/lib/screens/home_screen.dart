@@ -18,12 +18,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nombre: ${auth.displayName}',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Email: ${auth.displayEmail}',
+              'Usuario: ${auth.displayUsername}',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 24),
@@ -31,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 const Text('Estado de sesion: '),
                 Text(
-                  auth.hasToken ? 'token presente' : 'sin token',
+                  auth.hasToken ? 'Token presente ✓' : 'Sin token',
                   style: TextStyle(
                     color: auth.hasToken ? Colors.green : Colors.red,
                     fontWeight: FontWeight.bold,

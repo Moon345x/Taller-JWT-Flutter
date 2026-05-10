@@ -1,33 +1,28 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProfile {
-  const UserProfile({this.name, this.email});
+  const UserProfile({this.username});
 
-  final String? name;
-  final String? email;
+  final String? username;
 }
 
 class StorageService {
-  static const String _nameKey = 'user_name';
-  static const String _emailKey = 'user_email';
+  static const String _usernameKey = 'username';
 
-  Future<void> saveProfile({required String name, required String email}) async {
+  Future<void> saveUsername(String username) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_nameKey, name);
-    await prefs.setString(_emailKey, email);
+    await prefs.setString(_usernameKey, username);
   }
 
   Future<UserProfile> getProfile() async {
     final prefs = await SharedPreferences.getInstance();
     return UserProfile(
-      name: prefs.getString(_nameKey),
-      email: prefs.getString(_emailKey),
+      username: prefs.getString(_usernameKey),
     );
   }
 
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_nameKey);
-    await prefs.remove(_emailKey);
+    await prefs.remove(_usernameKey);
   }
 }
