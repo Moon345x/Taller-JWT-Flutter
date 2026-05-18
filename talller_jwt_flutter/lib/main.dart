@@ -4,10 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'providers/auth_provider.dart';
+import 'screens/universidad_form_screen.dart';
+import 'screens/universidades_list_screen.dart';
 import 'services/auth_service.dart';
 import 'services/secure_storage_service.dart';
 import 'services/storage_service.dart';
-import 'widgets/auth_gate.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,12 +44,28 @@ class AppRoot extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Taller JWT',
+        title: 'Gestión de Universidades',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
           useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.light,
+          ),
         ),
-        home: const AuthGate(),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.dark,
+          ),
+        ),
+        themeMode: ThemeMode.system,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const UniversidadesListScreen(),
+          '/form': (context) => const UniversidadFormScreen(),
+        },
       ),
     );
   }
